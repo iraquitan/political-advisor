@@ -6,6 +6,8 @@ redis = Redis(host='redis', port=6379)
 
 # Create your views here.
 def home(request):
+    context = dict()
     counter = redis.incr('counter')
-    return render(request, 'myapp/home.html',
-                  {'counter': counter})
+    context['counter'] = counter
+    return render(request=request, template_name='myapp/home.html',
+                  context=context)
