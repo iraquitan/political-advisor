@@ -7,7 +7,7 @@ web:
     - postgres:postgres
     - redis:redis
   volumes:
-    - /usr/src/app/political_advisor_app/static
+    - /usr/src/app/myapp/static
   env_file: .env
   command: /usr/local/bin/gunicorn mainsite.wsgi:application -w 2 -b :8000
 
