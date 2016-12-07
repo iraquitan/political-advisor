@@ -8,7 +8,7 @@ python:
 
 env:
   global:
-    - SECRET_KEY=t#%bd&zbf+j0^zeakj&(!b7!otqgvpq6f9kju)o=#y)9yq@l+a
+    - SECRET_KEY='t#%bd&zbf+j0^zeakj&(!b7!otqgvpq6f9kju)o=#y)9yq@l+a'
     - DB_NAME=postgres
     - DB_USER=postgres
     - DB_PASS=postgres
