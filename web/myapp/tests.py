@@ -2,6 +2,6 @@ from django.test import TestCase
 
 
 # Create your tests here.
-class BaseTest(TestCase):
-    def base_test(self):
-        self.assertEqual(1, 1)
+class BaseTests(TestCase):
+    def test_base(self):
+        self.assertEqual(True, False)
