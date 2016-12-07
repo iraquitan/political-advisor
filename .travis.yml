@@ -6,14 +6,17 @@ python:
   - "3.5"
   - "3.4"
 
+services:
+  - postgresql
+
 env:
   global:
     - SECRET_KEY='t#%bd&zbf+j0^zeakj&(!b7!otqgvpq6f9kju)o=#y)9yq@l+a'
-    - DB_NAME=postgres
+    - DB_NAME=travis_ci_test
     - DB_USER=postgres
-    - DB_PASS=postgres
-    - DB_SERVICE=postgres
-    - DB_PORT=5432
+    - DB_PASS=''
+    - DB_SERVICE=localhost
+    - DB_PORT=''
   matrix:
     - DJANGO_VERSION=1.8.15
     - DJANGO_VERSION=1.9.10
@@ -28,6 +31,7 @@ matrix:
 
 before_install:
   - pip install codecov
+  - psql -c 'create database travis_ci_test;' -U postgres
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
