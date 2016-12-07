@@ -26,11 +26,11 @@ before_install:
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -r requirements.txt
-  - pip install -r requirements-test.txt
+  - pip install -r ./web/requirements.txt
+  - pip install -r ./web/requirements-test.txt
 
 # command to run tests using coverage, e.g. python setup.py test
-script: python manage.py test myapp
+script: python ./web/manage.py test myapp
 
 after_success:
   - codecov
