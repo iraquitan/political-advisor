@@ -1,0 +1,45 @@
+# Config file for automatic testing at travis-ci.org
+
+language: python
+
+python:
+  - "3.5"
+  - "3.4"
+
+services:
+  - postgresql
+
+env:
+  global:
+    - SECRET_KEY='t#%bd&zbf+j0^zeakj&(!b7!otqgvpq6f9kju)o=#y)9yq@l+a'
+    - DB_NAME=travis_ci_test
+    - DB_USER=postgres
+    - DB_PASS=''
+    - DB_SERVICE=localhost
+    - DB_PORT=''
+  matrix:
+    - DJANGO_VERSION=1.8.15
+    - DJANGO_VERSION=1.9.10
+    - DJANGO_VERSION=1.10.3
+
+matrix:
+  include:
+    - python: "3.5"
+      env: TEST_PEP8=True
+      install: pip install flake8
+      script: flake8 ./web/myapp
+
+before_install:
+  - pip install codecov
+  - psql -c 'create database travis_ci_test;' -U postgres
+
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+  - pip install -r ./web/requirements.txt
+  - pip install -r ./web/requirements-test.txt
+
+# command to run tests using coverage, e.g. python setup.py test
+script: coverage run --source='./web' ./web/manage.py test myapp
+
+after_success:
+  - codecov
