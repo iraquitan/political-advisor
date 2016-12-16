@@ -6,6 +6,20 @@ from web.myapp.models.abstract import AbsctractModel
 
 
 # Create your models here.
+class AssessorGroups(Group):
+    GROUP_CHOICES = (
+        ('L1', _('Level 1')),
+        ('L2', _('Level 2')),
+        ('L3', _('Level 3')),
+        ('L4', _('Level 4')),
+        ('L5', _('Level 5')),
+    )
+
+    name = models.CharField(_('name'), max_length=80, unique=True,
+                            choices=GROUP_CHOICES)
+    description = models.TextField()
+
+
 class AssessorModel(User):
     parent = models.ForeignKey(User, related_name=_('assessors'),
                                related_query_name=_('assessor'))
@@ -43,17 +57,3 @@ class AssessorAddress(AbsctractModel):
     postcode = models.CharField()
     lat = models.FloatField()
     lon = models.FloatField()
-
-
-class AssessorGroups(Group):
-    GROUP_CHOICES = (
-        ('L1', _('Level 1')),
-        ('L2', _('Level 2')),
-        ('L3', _('Level 3')),
-        ('L4', _('Level 4')),
-        ('L5', _('Level 5')),
-    )
-
-    name = models.CharField(_('name'), max_length=80, unique=True,
-                            choices=GROUP_CHOICES)
-    description = models.TextField()
