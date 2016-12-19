@@ -20,40 +20,29 @@ from .abstract import AbsctractModel
 #     description = models.TextField()
 #
 #
-# class AssessorModel(User):
-#     parent = models.ForeignKey(User, related_name=_('assessors'),
-#                                related_query_name=_('assessor'))
-#     groups = models.ManyToManyField(
-#         AssessorGroups,
-#         verbose_name=_('groups'),
-#         blank=True,
-#         help_text=_(
-#             'The groups this user belongs to. A user will get all '
-#             'permissions granted to each of their groups.'
-#         ),
-#         related_name="assessor_group",
-#         related_query_name="assessor_group",
-#     )
-#
-#
-# class AssessorProfile(models.Model):
-#     GENDER_CHOICES = (
-#         ('U', _('Undefined')),
-#         ('M', _('Male')),
-#         ('F', _('Female'))
-#     )
-#
-#     user = models.OneToOneField(AssessorModel, unique=True)
-#     gender = models.CharField(choices=GENDER_CHOICES)
-#     picture = models.FilePathField()
-#
-#
-# class AssessorAddress(AbsctractModel):
-#     user = models.ForeignKey(AssessorModel, related_name=_('addresses'),
-#                              related_query_name=_('address'))
-#     country = models.CharField()
-#     state = models.CharField()
-#     city = models.CharField()
-#     postcode = models.CharField()
-#     lat = models.FloatField()
-#     lon = models.FloatField()
+class AssessorModel(User):
+    parent = models.ForeignKey(User, related_name=_('assessors'),
+                               related_query_name=_('assessor'))
+
+
+class AssessorProfile(models.Model):
+    GENDER_CHOICES = (
+        ('U', _('Undefined')),
+        ('M', _('Male')),
+        ('F', _('Female'))
+    )
+
+    user = models.OneToOneField(AssessorModel, unique=True)
+    gender = models.CharField(choices=GENDER_CHOICES)
+    picture = models.FilePathField()
+
+
+class Address(AbsctractModel):
+    user = models.ForeignKey(AssessorModel, related_name=_('addresses'),
+                             related_query_name=_('address'))
+    country = models.CharField()
+    state = models.CharField()
+    city = models.CharField()
+    postcode = models.CharField()
+    lat = models.FloatField()
+    lon = models.FloatField()

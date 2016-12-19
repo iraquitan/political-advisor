@@ -16,17 +16,12 @@ def home(request):
 
 
 def signup(request):
-    print("Testing SignUp path printing")
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = UserForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            print(form.cleaned_data['first_name'])
-            print(form.cleaned_data['last_name'])
-            print(form.cleaned_data['email'])
-            print(form.cleaned_data['password'])
             # redirect to a new URL:
             return redirect('home')
 

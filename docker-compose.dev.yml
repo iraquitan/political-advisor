@@ -1,28 +1,17 @@
-#dev:
-#  build: ./web
-#  dockerfile: Dockerfile
-#  env_file: .env
-#  volumes_from:
-#    - web
-#  links:
-#    - postgres:postgres
-#    - redis:redis
-#    - web:web
-#  command: /usr/local/bin/python manage.py runserver
-
 web:
   build: ./web
+  dockerfile: Dockerfile.dev
   ports:
     - "8000:8000"
   links:
     - postgres:postgres
     - redis:redis
   volumes:
-    - /usr/src/app
-    - /usr/src/app/myapp/static
+    - ./web:/usr/src/app
   env_file: .env
   environment:
     DEBUG: 'true'
+    PYTHONUNBUFFERED: 0
   command: /usr/local/bin/python manage.py runserver 0.0.0.0:8000
 
 postgres:
