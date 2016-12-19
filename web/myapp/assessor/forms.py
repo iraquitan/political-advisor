@@ -33,3 +33,21 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['country', 'state', 'city', 'postcode']
+
+
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = AssessorModel
+        fields = ['email', 'password']
+        widgets = {
+            'password': forms.PasswordInput()
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        for key, field in self.fields.items():
+            if isinstance(field.widget, (forms.TextInput, forms.Textarea,
+                                         forms.DateInput, forms.DateTimeInput,
+                                         forms.TimeInput)):
+                field.widget.attrs.update({'placeholder': field.label,
+                                           'class': 'form-control'})
