@@ -34,7 +34,7 @@ class AssessorProfile(models.Model):
 
     user = models.OneToOneField(AssessorModel, unique=True)
     gender = models.CharField(choices=GENDER_CHOICES)
-    picture = models.FilePathField()
+    picture = models.FileField()
 
 
 class Address(AbsctractModel):

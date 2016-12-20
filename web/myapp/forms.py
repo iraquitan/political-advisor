@@ -4,7 +4,10 @@ from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import User
 
+from .utils import placeholderify
 
+
+@placeholderify
 class UserForm(ModelForm):
     class Meta:
         model = User
@@ -13,16 +16,8 @@ class UserForm(ModelForm):
             'password': forms.PasswordInput()
         }
 
-    def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
-        for key, field in self.fields.items():
-            if isinstance(field.widget, (forms.TextInput, forms.Textarea,
-                                         forms.DateInput, forms.DateTimeInput,
-                                         forms.TimeInput)):
-                field.widget.attrs.update({'placeholder': field.label,
-                                           'class': 'form-control'})
 
-
+@placeholderify
 class LoginForm(ModelForm):
     class Meta:
         model = User
@@ -30,12 +25,3 @@ class LoginForm(ModelForm):
         widgets = {
             'password': forms.PasswordInput()
         }
-
-    def __init__(self, *args, **kwargs):
-        super(LoginForm, self).__init__(*args, **kwargs)
-        for key, field in self.fields.items():
-            if isinstance(field.widget, (forms.TextInput, forms.Textarea,
-                                         forms.DateInput, forms.DateTimeInput,
-                                         forms.TimeInput)):
-                field.widget.attrs.update({'placeholder': field.label,
-                                           'class': 'form-control'})
