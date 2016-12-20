@@ -5,11 +5,10 @@
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <h2>{{ title }}</h2>
-      <form action="/signup/" method="post">
+      <form action="" method="post">
         {% csrf_token %}
         {% for field in form %}
-          <div class="form-group">
-            {{ field.errors }}
+          <div class="form-group {%if field.errors %}has-error{%endif%}">
             {{ field.label_tag }} {{ field }}
             {% if field.help_text %}
               <span id="helpBlock" class="help-block">{{ field.help_text|safe }}</span>
@@ -19,8 +18,7 @@
         <fieldset>
           <legend>{% trans "Profile" %}</legend>
           {% for field in profile %}
-            <div class="form-group">
-              {{ field.errors }}
+            <div class="form-group {%if field.errors %}has-error{%endif%}">
               {{ field.label_tag }} {{ field }}
               {% if field.help_text %}
                 <span id="helpBlock" class="help-block">{{ field.help_text|safe }}</span>
@@ -31,8 +29,7 @@
         <fieldset>
           <legend>{% trans "Address" %}</legend>
           {% for field in address %}
-            <div class="form-group">
-              {{ field.errors }}
+            <div class="form-group {%if field.errors %}has-error{%endif%}">
               {{ field.label_tag }} {{ field }}
               {% if field.help_text %}
                 <span id="helpBlock" class="help-block">{{ field.help_text|safe }}</span>

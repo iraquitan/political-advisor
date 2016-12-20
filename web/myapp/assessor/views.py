@@ -25,17 +25,19 @@ def login(request):
 
 def register_assessor(request):
     if request.method == 'POST':
-        form = AssessorForm(request.POST, prefix='ass_f')
-        prof_form = AssessorProfileForm(request.POST, prefix='ass_f')
-        address_form = AddressForm(request.POST, prefix='add_f')
-        if form.is_valid():
+        form = AssessorForm(request.POST, prefix='main')
+        profile_f = AssessorProfileForm(request.POST, prefix='profile')
+        address_f = AddressForm(request.POST, prefix='address')
+
+        if form.is_valid() and profile_f.is_valid():
+            print(form.cleaned_data)
             return redirect('home')
     else:
-        assessor_form = AssessorForm(prefix='ass_f')
-        prof_form = AssessorProfileForm(prefix='ass_f')
-        address_form = AddressForm(prefix='add_f')
+        form = AssessorForm(prefix='main')
+        profile_f = AssessorProfileForm(prefix='profile')
+        address_f = AddressForm(prefix='address')
     title = _("Register Assessor")
     submit = _("Register")
     return render(request, 'myapp/assessor_form.html',
-                  {'form': assessor_form, 'profile': prof_form,
-                   'address': address_form, 'title': title, 'submit': submit})
+                  {'form': form, 'profile': profile_f, 'address': address_f,
+                   'title': title, 'submit': submit})

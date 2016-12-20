@@ -25,7 +25,7 @@ class AssessorProfileForm(forms.ModelForm):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ['country', 'state', 'city', 'postcode']
+        fields = ['country', 'postcode', 'state', 'city']
 
 
 @placeholderify

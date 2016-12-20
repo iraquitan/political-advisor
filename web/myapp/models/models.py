@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import User, Group, Permission
 from django.utils.translation import gettext_lazy as _
@@ -21,8 +23,10 @@ from .abstract import AbsctractModel
 #
 #
 class AssessorModel(User):
-    parent = models.ForeignKey(User, related_name=_('assessors'),
+    parent = models.ForeignKey(ContentType, related_name=_('assessors'),
                                related_query_name=_('assessor'))
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('parent', 'object_id')
 
 
 class AssessorProfile(models.Model):
@@ -34,7 +38,7 @@ class AssessorProfile(models.Model):
 
     user = models.OneToOneField(AssessorModel, unique=True)
     gender = models.CharField(choices=GENDER_CHOICES)
-    picture = models.FileField()
+    picture = models.FileField(blank=True)
 
 
 class Address(AbsctractModel):
