@@ -25,12 +25,10 @@ def login(request):
 
 
 def register_assessor(request):
-    ProfileFormSet = formset_factory(AssessorProfileForm)
-    AddressFormSet = formset_factory(AddressForm)
     if request.method == 'POST':
-        form = AssessorForm(request.POST)
-        profile_f = ProfileFormSet(request.POST)
-        address_f = AddressFormSet(request.POST)
+        form = AssessorForm(request.POST, prefix='main')
+        profile_f = AssessorProfileForm(request.POST, prefix='profile')
+        address_f = AddressForm(request.POST, prefix='address')
 
         if all([form.is_valid(), profile_f.is_valid(), address_f.is_valid()]):
             print(form.cleaned_data)
@@ -39,8 +37,9 @@ def register_assessor(request):
             return redirect('home')
     else:
         form = AssessorForm()
-        profile_f = ProfileFormSet()
-        address_f = AddressFormSet()
+        profile_f = AssessorProfileForm(prefix='profile')
+        address_f = AddressForm(prefix='address')
+
     title = _("Register Assessor")
     submit = _("Register")
     return render(request, 'myapp/assessor_form.html',
