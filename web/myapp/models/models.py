@@ -37,16 +37,16 @@ class AssessorProfile(models.Model):
     )
 
     user = models.OneToOneField(AssessorModel, unique=True)
-    gender = models.CharField(choices=GENDER_CHOICES)
+    gender = models.CharField(choices=GENDER_CHOICES, max_length=1)
     picture = models.FileField(blank=True)
 
 
 class Address(AbsctractModel):
     user = models.ForeignKey(AssessorModel, related_name=_('addresses'),
                              related_query_name=_('address'))
-    country = models.CharField()
-    state = models.CharField()
-    city = models.CharField()
-    postcode = models.CharField()
+    country = models.CharField(max_length=30)
+    state = models.CharField(max_length=30)
+    city = models.CharField(max_length=30)
+    postcode = models.CharField(max_length=30)
     lat = models.FloatField()
     lon = models.FloatField()

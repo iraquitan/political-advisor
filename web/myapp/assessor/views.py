@@ -1,3 +1,4 @@
+from django.forms import formset_factory
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 
@@ -24,18 +25,22 @@ def login(request):
 
 
 def register_assessor(request):
+    ProfileFormSet = formset_factory(AssessorProfileForm)
+    AddressFormSet = formset_factory(AddressForm)
     if request.method == 'POST':
-        form = AssessorForm(request.POST, prefix='main')
-        profile_f = AssessorProfileForm(request.POST, prefix='profile')
-        address_f = AddressForm(request.POST, prefix='address')
+        form = AssessorForm(request.POST)
+        profile_f = ProfileFormSet(request.POST)
+        address_f = AddressFormSet(request.POST)
 
-        if form.is_valid() and profile_f.is_valid():
+        if all([form.is_valid(), profile_f.is_valid(), address_f.is_valid()]):
             print(form.cleaned_data)
+            print(profile_f.cleaned_data)
+            print(address_f.cleaned_data)
             return redirect('home')
     else:
-        form = AssessorForm(prefix='main')
-        profile_f = AssessorProfileForm(prefix='profile')
-        address_f = AddressForm(prefix='address')
+        form = AssessorForm()
+        profile_f = ProfileFormSet()
+        address_f = AddressFormSet()
     title = _("Register Assessor")
     submit = _("Register")
     return render(request, 'myapp/assessor_form.html',

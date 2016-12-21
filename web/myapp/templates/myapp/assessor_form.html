@@ -16,6 +16,7 @@
           </div>
         {% endfor %}
         <fieldset>
+          {{ profile.management_form }}
           <legend>{% trans "Profile" %}</legend>
           {% for field in profile %}
             <div class="form-group {%if field.errors %}has-error{%endif%}">
@@ -27,6 +28,7 @@
           {% endfor %}
         </fieldset>
         <fieldset>
+          {{ profile.management_form }}
           <legend>{% trans "Address" %}</legend>
           {% for field in address %}
             <div class="form-group {%if field.errors %}has-error{%endif%}">
