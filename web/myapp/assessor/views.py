@@ -26,22 +26,26 @@ def login(request):
 
 def register_assessor(request):
     if request.method == 'POST':
-        form = AssessorForm(request.POST, prefix='main')
-        profile_f = AssessorProfileForm(request.POST, prefix='profile')
-        address_f = AddressForm(request.POST, prefix='address')
+        assessor_form = AssessorForm(request.POST, prefix='main')
+        profile_form = AssessorProfileForm(request.POST, prefix='profile')
+        address_form = AddressForm(request.POST, prefix='address')
 
-        if all([form.is_valid(), profile_f.is_valid(), address_f.is_valid()]):
-            print(form.cleaned_data)
-            print(profile_f.cleaned_data)
-            print(address_f.cleaned_data)
+        if all([assessor_form.is_valid(), profile_form.is_valid(),
+                address_form.is_valid()]):
+            new_assessor = assessor_form.save()
+            profile = profile_form.save(commit=False)
+            address = address_form.save(commit=False)
+            new_assessor.profile = profile
+            new_assessor.addresses.add(address)
+            assessor_form.save_m2m()
             return redirect('home')
     else:
-        form = AssessorForm()
-        profile_f = AssessorProfileForm(prefix='profile')
-        address_f = AddressForm(prefix='address')
+        assessor_form = AssessorForm(prefix='main')
+        profile_form = AssessorProfileForm(prefix='profile')
+        address_form = AddressForm(prefix='address')
 
     title = _("Register Assessor")
     submit = _("Register")
     return render(request, 'myapp/assessor_form.html',
-                  {'form': form, 'profile': profile_f, 'address': address_f,
-                   'title': title, 'submit': submit})
+                  {'form': assessor_form, 'profile': profile_form,
+                   'address': address_form, 'title': title, 'submit': submit})

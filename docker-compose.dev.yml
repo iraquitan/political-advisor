@@ -12,7 +12,7 @@ web:
   environment:
     DEBUG: 'true'
     PYTHONUNBUFFERED: 0
-  command: /usr/local/bin/python manage.py runserver 0.0.0.0:8000
+  command: bash -c "/usr/local/bin/python manage.py collectstatic --noinput && /usr/local/bin/python manage.py runserver 0.0.0.0:8000"
 
 postgres:
   image: postgres:latest
