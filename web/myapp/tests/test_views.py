@@ -1,16 +1,30 @@
 from django.test import TestCase
 from django.urls import reverse
 
+# from ..assessor.forms import AssessorForm, AssessorProfileForm, AddressForm
+
+
+class HomeView(TestCase):
+    def test_homepage(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+
 
 class AssessorSignUpView(TestCase):
-    def setUp(self):
-        self.assessor = dict(first_name='Irarquitan',
-                             last_name='Cordeiro Filho', username='iraquitan',
-                             password='testPassword',
-                             email='testemail@gmail.com')
-        self.profile = dict(gender='M', picture=None)
-        self.address = dict(country='Brazil', state='Pará', city='Belém',
-                            postcode='66050110')
+    # def setUp(self):
+    #     self.assessor_form = AssessorForm({'first_name': 'Iraquitan',
+    #                                        'last_name': 'Cordeiro Filho',
+    #                                        'username': 'iraquitan',
+    #                                        'password': 'testPassword',
+    #                                        'email': 'testemail@gmail.com'},
+    #                                       prefix='main')
+    #     self.profile_form = AssessorProfileForm({'gender': 'M',
+    #                                              'picture': None},
+    #                                             prefix='profile')
+    #     self.address = AddressForm({'country': 'Brazil', 'state': 'Pará',
+    #                                 'city': 'Belém', 'postcode': '66050110'},
+    #                                prefix='address')
+
     def test_success(self):
         response = self.client.get('/user/assessor/register/')
 
@@ -18,10 +32,29 @@ class AssessorSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Register assessor
-        data = self.assessor.copy()
-        data.update(self.profile)
-        data.update(self.address)
-        response = self.client.post('/user/assessor/register/', data)
-        self.assertEqual(response.status_code, 200)
-        # Check if redirect to the correct page
+        # self.assertTrue(all([self.assessor_form.is_valid(),
+        #                      self.profile_form.is_valid(),
+        #                      self.address_form.is_valid()]))
+        # new_assessor = self.assessor_form.save()
+        # profile = self.profile_form.save(commit=False)
+        # address = self.address_form.save(commit=False)
+        # new_assessor.profile = profile
+        # new_assessor.addresses.add(address)
+        # self.assessor_form.save_m2m()
+        #
+        # self.assertEqual(new_assessor.profile.gender, "M")
+        # address = new_assessor.addresses[0]
+        # self.assertEqual(address.country, "Brazil")
+        # self.assertEqual(address.state, "Pará")
+        # self.assertEqual(address.city, "Belém")
+        # self.assertEqual(address.postcode, "66050110")
+
+        # data = self.assessor.copy()
+        # data.update(self.profile)
+        # data.update(self.address)
+        # print(data)
+        # response = self.client.post('/user/assessor/register/', data)
+        # self.assertEqual(response.status_code, 200)
+        # # Check if redirect to the correct page
         # self.assertRedirects(response, reverse('home'))
+        # # self.assertRedirects(response, '/')
