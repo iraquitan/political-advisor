@@ -8,7 +8,7 @@ web:
     - redis:redis
   volumes:
     - /usr/src/app
-    - /usr/src/app/myapp/static
+    - /usr/src/app/django_political_advisor/static
   env_file: .env
   environment:
     DEBUG: 'true'

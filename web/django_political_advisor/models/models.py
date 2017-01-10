@@ -23,10 +23,11 @@ from .abstract import AbsctractModel
 #
 #
 class AssessorModel(User):
-    parent = models.ForeignKey(ContentType, related_name=_('assessors'),
-                               related_query_name=_('assessor'))
+    content_type = models.ForeignKey(ContentType, related_name=_('assessors'),
+                                     related_query_name=_('assessor'),
+                                     verbose_name='parent')
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('parent', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
 
 class AssessorProfile(models.Model):
@@ -40,7 +41,7 @@ class AssessorProfile(models.Model):
                                 on_delete=models.CASCADE,
                                 related_name=_('profile'))
     gender = models.CharField(choices=GENDER_CHOICES, max_length=1)
-    picture = models.FileField(blank=True)
+    picture = models.FileField(blank=True, null=True)
 
 
 class Address(AbsctractModel):
@@ -51,5 +52,5 @@ class Address(AbsctractModel):
     state = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     postcode = models.CharField(max_length=30)
-    lat = models.FloatField()
-    lon = models.FloatField()
+    lat = models.FloatField(null=True, blank=True)
+    lon = models.FloatField(null=True, blank=True)

@@ -5,8 +5,8 @@
  * Author email: iraquitanfilho@gmail.com
  * Author login: pma007
  * File: __init__.py
- * Date: 1/6/17
- * Time: 16:27
+ * Date: 1/10/17
+ * Time: 17:58
  * Description: Add script info here.
 .. moduleauthor:: Iraquitan Cordeiro Filho <iraquitanfilho@gmail.com>
 

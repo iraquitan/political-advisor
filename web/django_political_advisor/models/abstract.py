@@ -1,16 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
- * Project: political-advisor
- * Author name: Iraquitan Cordeiro Filho
- * Author email: iraquitanfilho@gmail.com
- * Author login: pma007
- * File: abstract
- * Date: 12/14/16
- * Time: 15:09
- * Description: Add script info here.
-.. moduleauthor:: Iraquitan Cordeiro Filho <iraquitanfilho@gmail.com>
-
-"""
 import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _

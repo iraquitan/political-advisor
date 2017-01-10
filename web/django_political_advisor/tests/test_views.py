@@ -1,3 +1,4 @@
+import re
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,8 +7,22 @@ from django.urls import reverse
 
 class HomeView(TestCase):
     def test_homepage(self):
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
+        response1 = self.client.get('/')
+        self.assertEqual(response1.status_code, 200)  # Check response is 200
+        content1 = response1.content.decode("utf-8")
+        counter1 = re.search("(?<=viewed <strong>)\d+(?=</strong> times!)",
+                             content1)
+        counter1 = int(counter1.group()) if counter1 else 0
+
+        response2 = self.client.get('/')
+        self.assertEqual(response2.status_code, 200)  # Check response is 200
+        content2 = response2.content.decode("utf-8")
+        counter2 = re.search("(?<=viewed <strong>)\d+(?=</strong> times!)",
+                             content2)
+        counter2 = int(counter2.group()) if counter2 else 0
+
+        # Check that page counter has increased
+        self.assertGreater(counter2, counter1)
 
 
 class AssessorSignUpView(TestCase):
@@ -21,9 +36,10 @@ class AssessorSignUpView(TestCase):
     #     self.profile_form = AssessorProfileForm({'gender': 'M',
     #                                              'picture': None},
     #                                             prefix='profile')
-    #     self.address = AddressForm({'country': 'Brazil', 'state': 'Pará',
-    #                                 'city': 'Belém', 'postcode': '66050110'},
-    #                                prefix='address')
+    #    self.address_form = AddressForm({'country': 'Brazil', 'state': 'Pará',
+    #                                      'city': 'Belém',
+    #                                      'postcode': '66050110'},
+    #                                     prefix='address')
 
     def test_success(self):
         response = self.client.get('/user/assessor/register/')

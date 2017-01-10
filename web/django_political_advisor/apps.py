@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class PoliticalAdvisorAppConfig(AppConfig):
-    name = 'myapp'
+    name = 'django_political_advisor'

@@ -7,7 +7,7 @@ web:
     - postgres:postgres
     - redis:redis
   volumes:
-    - /usr/src/app/myapp/static
+    - /usr/src/app/django_political_advisor/static
   env_file: .env
   command: sh /usr/src/app/docker-web-script.sh
 
