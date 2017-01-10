@@ -18,6 +18,7 @@ env:
     - DB_PASS=''
     - DB_SERVICE=localhost
     - DB_PORT=''
+    - REDIS_SERVICE=localhost
   matrix:
     - DJANGO_VERSION=1.8.15
     - DJANGO_VERSION=1.9.10

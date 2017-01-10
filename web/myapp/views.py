@@ -1,9 +1,11 @@
+import os
+
 from django.shortcuts import render, redirect
 from redis import Redis
 
 from .forms import UserForm, LoginForm
 
-redis = Redis(host='redis', port=6379)
+redis = Redis(host=os.environ['REDIS_SERVICE'], port=6379)
 
 
 # Create your views here.
