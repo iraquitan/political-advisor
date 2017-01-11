@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-# from ..models.models import AssessorModel
+from ..models.models import AssessorModel
 
 
 class MyTestCase(TestCase):
