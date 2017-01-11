@@ -13,7 +13,8 @@ def home(request):
     context = dict()
     counter = redis.incr('counter')
     context['counter'] = counter
-    return render(request=request, template_name='django_political_advisor/home.html',
+    return render(request=request,
+                  template_name='django_political_advisor/home.html',
                   context=context)
 
 

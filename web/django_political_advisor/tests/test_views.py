@@ -2,7 +2,7 @@ import re
 from django.test import TestCase
 from django.urls import reverse
 
-# from ..assessor.forms import AssessorForm, AssessorProfileForm, AddressForm
+from ..assessor.forms import AssessorForm, AssessorProfileForm, AddressForm
 
 
 class HomeView(TestCase):
@@ -26,20 +26,20 @@ class HomeView(TestCase):
 
 
 class AssessorSignUpView(TestCase):
-    # def setUp(self):
-    #     self.assessor_form = AssessorForm({'first_name': 'Iraquitan',
-    #                                        'last_name': 'Cordeiro Filho',
-    #                                        'username': 'iraquitan',
-    #                                        'password': 'testPassword',
-    #                                        'email': 'testemail@gmail.com'},
-    #                                       prefix='main')
-    #     self.profile_form = AssessorProfileForm({'gender': 'M',
-    #                                              'picture': None},
-    #                                             prefix='profile')
-    #    self.address_form = AddressForm({'country': 'Brazil', 'state': 'Pará',
-    #                                      'city': 'Belém',
-    #                                      'postcode': '66050110'},
-    #                                     prefix='address')
+    def setUp(self):
+        self.assessor_form = AssessorForm({'first_name': 'Iraquitan',
+                                           'last_name': 'Cordeiro Filho',
+                                           'username': 'iraquitan',
+                                           'password': 'testPassword',
+                                           'email': 'testemail@gmail.com'},
+                                          prefix='main')
+        self.profile_form = AssessorProfileForm({'gender': 'M',
+                                                 'picture': None},
+                                                prefix='profile')
+        self.address_form = AddressForm({'country': 'Brazil', 'state': 'Pará',
+                                         'city': 'Belém',
+                                         'postcode': '66050110'},
+                                        prefix='address')
 
     def test_success(self):
         response = self.client.get('/user/assessor/register/')
@@ -48,9 +48,9 @@ class AssessorSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Register assessor
-        # self.assertTrue(all([self.assessor_form.is_valid(),
-        #                      self.profile_form.is_valid(),
-        #                      self.address_form.is_valid()]))
+        self.assertTrue(all([self.assessor_form.is_valid(),
+                             self.profile_form.is_valid(),
+                             self.address_form.is_valid()]))
         # new_assessor = self.assessor_form.save()
         # profile = self.profile_form.save(commit=False)
         # address = self.address_form.save(commit=False)
