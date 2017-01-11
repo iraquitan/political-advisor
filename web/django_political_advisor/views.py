@@ -13,7 +13,7 @@ def home(request):
     context = dict()
     counter = redis.incr('counter')
     context['counter'] = counter
-    return render(request=request, template_name='myapp/home.html',
+    return render(request=request, template_name='django_political_advisor/home.html',
                   context=context)
 
 
@@ -32,8 +32,8 @@ def signup(request):
         form = UserForm()
     title = "Sign Up"
     submit = "Register"
-    return render(request, 'myapp/form.html', {'form': form, 'title': title,
-                                               'submit': submit})
+    return render(request, 'django_political_advisor/form.html',
+                  {'form': form, 'title': title, 'submit': submit})
 
 
 def login(request):
@@ -51,5 +51,5 @@ def login(request):
         form = LoginForm()
     title = "Login"
     submit = "Login"
-    return render(request, 'myapp/form.html', {'form': form, 'title': title,
-                                               'submit': submit})
+    return render(request, 'django_political_advisor/form.html',
+                  {'form': form, 'title': title, 'submit': submit})

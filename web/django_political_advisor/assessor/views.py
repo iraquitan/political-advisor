@@ -20,8 +20,8 @@ def login(request):
         form = LoginForm()
     title = _("Login Assessor")
     submit = _("Login")
-    return render(request, 'myapp/form.html', {'form': form, 'title': title,
-                                               'submit': submit})
+    return render(request, 'django_political_advisor/form.html',
+                  {'form': form, 'title': title, 'submit': submit})
 
 
 def register_assessor(request):
@@ -46,6 +46,6 @@ def register_assessor(request):
 
     title = _("Register Assessor")
     submit = _("Register")
-    return render(request, 'myapp/assessor_form.html',
+    return render(request, 'django_political_advisor/assessor_form.html',
                   {'form': assessor_form, 'profile': profile_form,
                    'address': address_form, 'title': title, 'submit': submit})

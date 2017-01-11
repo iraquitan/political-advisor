@@ -1,2 +1,2 @@
-from .abstract import AbsctractModel
+from .abstract import AbstractModel
 from .models import AssessorModel, AssessorProfile, Address

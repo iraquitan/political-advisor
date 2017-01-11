@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-class AbsctractModel(models.Model):
+class AbstractModel(models.Model):
 
     class Meta:
         abstract = True
