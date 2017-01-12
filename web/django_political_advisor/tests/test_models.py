@@ -2,10 +2,48 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
-from ..models.models import AssessorModel, Address
+from ..models.models import AssessorModel, Address, AssessorProfile
 
 
-class EntryModelTest(TestCase):
+class AssessorModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='test',
+                                        password='test_password',
+                                        email='test@test.com')
+        user_type = ContentType.objects.get_for_model(User)
+        object_id = self.user.id
+        self.assessor = AssessorModel.objects.create(content_type=user_type,
+                                                     object_id=object_id,
+                                                     username='test_assessor',
+                                                     password='test_password',
+                                                     email='assessor@test.com')
+
+    def test_parent(self):
+        parent = User.objects.filter(id=self.assessor.object_id).get()
+        self.assertEqual(self.user, parent)
+
+
+class AssessorProfileModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='test',
+                                        password='test_password',
+                                        email='test@test.com')
+        user_type = ContentType.objects.get_for_model(User)
+        object_id = self.user.id
+        self.assessor = AssessorModel.objects.create(content_type=user_type,
+                                                     object_id=object_id,
+                                                     username='test_assessor',
+                                                     password='test_password',
+                                                     email='assessor@test.com')
+        self.profile = AssessorProfile.objects.create(user=self.assessor,
+                                                      gender='M',
+                                                      picture=None)
+
+    def test_profile_user(self):
+        self.assertEqual(self.profile.user, self.assessor)
+
+
+class AddressModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(username='test',
                                         password='test_password',
@@ -25,6 +63,5 @@ class EntryModelTest(TestCase):
     def test_country(self):
         self.assertEqual(self.address.country, 'Brazil')
 
-    def test_parent(self):
-        parent = User.objects.filter(id=self.assessor.object_id).get()
-        self.assertEqual(self.user, parent)
+    def test_address_user(self):
+        self.assertEqual(self.address.user, self.assessor)
