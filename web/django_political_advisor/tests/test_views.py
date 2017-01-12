@@ -48,9 +48,6 @@ class AssessorSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Register assessor
-        self.assertTrue(self.assessor_form.is_valid())
-        self.assertTrue(self.profile_form.is_valid())
-        self.assertTrue(self.address_form.is_valid())
         # self.assertTrue(all([self.assessor_form.is_valid(),
         #                      self.profile_form.is_valid(),
         #                      self.address_form.is_valid()]))
