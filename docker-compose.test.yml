@@ -10,9 +10,7 @@ services:
     volumes:
       - ./web:/usr/src/app
     env_file: .env
-#    command: coverage run --source django_political_advisor run_tests.py
-#    command: /usr/local/bin/python manage.py test django_political_advisor
-    command: coverage run manage.py test django_political_advisor
+    command: coverage run manage.py test django_political_advisor.tests
 
   postgres:
     image: postgres:latest

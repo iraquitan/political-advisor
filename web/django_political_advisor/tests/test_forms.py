@@ -1,22 +1,20 @@
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
-from ..models.models import AssessorModel, Address
+from ..assessor.forms import AssessorForm
 
 
 class AssessorFormTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create(username='test',
-                                        password='test_password',
-                                        email='test@test.com')
-        user_type = ContentType.objects.get_for_model(User)
-        object_id = self.user.id
-        self.assessor = AssessorModel.objects.create(content_type=user_type,
-                                                     object_id=object_id,
-                                                     username='test_assessor',
-                                                     password='test_password',
-                                                     email='assessor@test.com')
+        self.form_valid_data = {
+            'first_name': 'Iraquitan', 'last_name': 'Cordeiro Filho',
+            'username': "iraquitan", 'email': "leela@example.com",
+            'password': "test_password",
+        }
 
-    def test_is_valid(self):
-        self.assertTrue(False, msg="Write test to check form is valid!")
+    def test_valid_data(self):
+        form = AssessorForm(self.form_valid_data)
+        self.assertTrue(form.is_valid())
+
+    def test_blank_data(self):
+        form = AssessorForm({})
+        self.assertFalse(form.is_valid())
