@@ -1,13 +1,39 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.utils.translation import gettext_lazy as _
 
 from .abstract import AbstractModel
 
 
 # Create your models here.
+# class CustomUser(AbstractUser):
+#     USER_CHOICES = (
+#         (_('SU'), _('Super User')),
+#         (_('AU'), _('Assessor User'))
+#     )
+#     user_type = models.CharField(max_length=2, choices=USER_CHOICES,
+#                                  default='SU')
+#
+#
+# class UserDetails(models.Model):
+#     GENDER_CHOICES = (
+#         ('U', _('Undefined')),
+#         ('M', _('Male')),
+#         ('F', _('Female'))
+#     )
+#     user = models.OneToOneField('CustomUser', on_delete=models.CASCADE)
+#     gender = models.CharField(choices=GENDER_CHOICES, max_length=2)
+#     picture = models.FileField(blank=True, null=True)
+#     super_user = models.OneToOneField('CustomUser', on_delete=models.CASCADE)
+#     content_type = models.ForeignKey(ContentType,
+#                                      verbose_name='parent',
+#                                      on_delete=models.CASCADE)
+#     object_id = models.PositiveIntegerField()
+#     content_object = GenericForeignKey('content_type', 'object_id')
+
+
 class AssessorModel(User):
     content_type = models.ForeignKey(ContentType, related_name=_('assessors'),
                                      related_query_name=_('assessor'),
