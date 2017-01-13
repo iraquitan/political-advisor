@@ -4,6 +4,7 @@ DOCKER_COMPOSE_PROD = $(DOCKER_COMPOSE) -f docker-compose.production.yml
 DOCKER_COMPOSE_TEST = $(DOCKER_COMPOSE) -f docker-compose.test.yml
 DOCKER_ARGS ?=
 APP_LIST ?= django_political_advisor.test
+RUN_TIME = $(shell date +%Y-%m-%dT%H:%M:%S)
 
 .PHONY: docker-stop-all collectstatics makemigrations run test
 
@@ -21,8 +22,8 @@ run: collectstatics
 
 test:
 	$(DOCKER_COMPOSE_TEST) -p ci up -d $(DOCKER_ARGS)
-	docker logs ci_sut_1
 	docker wait ci_sut_1
+	docker logs --since $(RUN_TIME) ci_sut_1
 	$(DOCKER_COMPOSE_TEST) -p ci stop
 
 ci:
