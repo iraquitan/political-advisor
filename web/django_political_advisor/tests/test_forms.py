@@ -1,9 +1,9 @@
 from django.test import TestCase
 
-from ..assessor.forms import AssessorForm, AssessorProfileForm, AddressForm
+from ..forms import CustomUserForm, ProfileForm, AddressForm
 
 
-class AssessorFormTest(TestCase):
+class CustomUserFormTest(TestCase):
     def setUp(self):
         self.form_valid_data = {
             'first_name': 'Iraquitan', 'last_name': 'Cordeiro Filho',
@@ -17,15 +17,15 @@ class AssessorFormTest(TestCase):
         }
 
     def test_valid_data(self):
-        form = AssessorForm(self.form_valid_data)
+        form = CustomUserForm(self.form_valid_data)
         self.assertTrue(form.is_valid())
 
     def test_blank_data(self):
-        form = AssessorForm({})
+        form = CustomUserForm({})
         self.assertFalse(form.is_valid())
 
     def test_invalid_data(self):
-        form = AssessorForm(self.form_invalid_data)
+        form = CustomUserForm(self.form_invalid_data)
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors, {
             'email': ['Enter a valid email address.'],
@@ -35,7 +35,7 @@ class AssessorFormTest(TestCase):
         })
 
 
-class AssessorProfileFormTest(TestCase):
+class ProfileFormTest(TestCase):
     def setUp(self):
         self.form_valid_data = {
             'gender': 'M',
@@ -47,15 +47,15 @@ class AssessorProfileFormTest(TestCase):
         }
 
     def test_valid_data(self):
-        form = AssessorProfileForm(self.form_valid_data)
+        form = ProfileForm(self.form_valid_data)
         self.assertTrue(form.is_valid())
 
     def test_blank_data(self):
-        form = AssessorProfileForm({})
+        form = ProfileForm({})
         self.assertFalse(form.is_valid())
 
     def test_invalid_data(self):
-        form = AssessorProfileForm(self.form_invalid_data)
+        form = ProfileForm(self.form_invalid_data)
         self.assertFalse(form.is_valid())
 
 

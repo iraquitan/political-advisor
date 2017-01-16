@@ -31,6 +31,10 @@ test: migrations-check
 	docker logs --since $(RUN_TIME) ci_sut_1
 	$(DOCKER_COMPOSE_TEST) -p ci stop
 
+flake8:
+	$(DOCKER_COMPOSE_TEST) -p ci run sut flake8
+	$(DOCKER_COMPOSE_TEST) -p ci stop
+
 ci: test
 	$(DOCKER_COMPOSE_TEST) -p ci run sut coverage report
 	$(DOCKER_COMPOSE_TEST) -p ci stop

@@ -2,25 +2,37 @@ from django import forms
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
-from django.contrib.auth.models import User
-
+from .models import Address, CustomUser, Profile
 from .utils import placeholderify
 
 
 @placeholderify
-class UserForm(ModelForm):
+class CustomUserForm(ModelForm):
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['first_name', 'last_name', 'username', 'email', 'password']
         widgets = {
             'password': forms.PasswordInput()
         }
 
 
-@placeholderify
-class LoginForm(ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = Profile
+        fields = ['gender', 'picture']
+
+
+@placeholderify
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ['country', 'postcode', 'state', 'city']
+
+
+@placeholderify
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
         fields = ['email', 'password']
         widgets = {
             'password': forms.PasswordInput()

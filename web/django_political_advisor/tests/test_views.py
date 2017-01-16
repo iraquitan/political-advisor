@@ -2,7 +2,7 @@ import re
 from django.test import TestCase
 from django.urls import reverse
 
-from ..assessor.forms import AssessorForm, AssessorProfileForm, AddressForm
+from ..forms import CustomUserForm, ProfileForm, AddressForm
 
 
 class HomeView(TestCase):
@@ -27,15 +27,15 @@ class HomeView(TestCase):
 
 class AssessorSignUpView(TestCase):
     def setUp(self):
-        self.assessor_form = AssessorForm({'first_name': 'Iraquitan',
-                                           'last_name': 'Cordeiro Filho',
-                                           'username': 'iraquitan',
-                                           'password': 'testPassword',
-                                           'email': 'testemail@gmail.com'},
-                                          prefix='main')
-        self.profile_form = AssessorProfileForm({'gender': 'M',
-                                                 'picture': None},
-                                                prefix='profile')
+        self.assessor_form = CustomUserForm({'first_name': 'Iraquitan',
+                                             'last_name': 'Cordeiro Filho',
+                                             'username': 'iraquitan',
+                                             'password': 'testPassword',
+                                             'email': 'testemail@gmail.com'},
+                                            prefix='main')
+        self.profile_form = ProfileForm({'gender': 'M',
+                                         'picture': None},
+                                        prefix='profile')
         self.address_form = AddressForm({'country': 'Brazil', 'state': 'Pará',
                                          'city': 'Belém',
                                          'postcode': '66050110'},

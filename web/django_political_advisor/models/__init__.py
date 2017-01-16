@@ -1,1 +1,1 @@
-from .models import AssessorModel, AssessorProfile, Address
+from .models import CustomUser, Profile, Address

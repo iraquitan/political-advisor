@@ -3,7 +3,7 @@ import os
 from django.shortcuts import render, redirect
 from redis import Redis
 
-from .forms import UserForm, LoginForm
+from .forms import CustomUserForm, LoginForm
 
 redis = Redis(host=os.environ['REDIS_SERVICE'], port=6379)
 
@@ -21,7 +21,7 @@ def home(request):
 def signup(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = UserForm(request.POST)
+        form = CustomUserForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
@@ -30,7 +30,7 @@ def signup(request):
 
             # if a GET (or any other method) we'll create a blank form
     else:
-        form = UserForm()
+        form = CustomUserForm()
     title = "Sign Up"
     submit = "Register"
     return render(request, 'django_political_advisor/form.html',
