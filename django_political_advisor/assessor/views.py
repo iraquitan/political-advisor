@@ -31,12 +31,12 @@ def register_assessor(request):
 
         if all([custom_user_form.is_valid(), profile_form.is_valid(),
                 address_form.is_valid()]):
-            new_assessor = custom_user_form.save()
-            profile = profile_form.save(commit=False)
-            address = address_form.save(commit=False)
-            new_assessor.profile = profile
-            new_assessor.addresses.add(address)
-            custom_user_form.save_m2m()
+            # new_assessor = custom_user_form.save()
+            # profile = profile_form.save(commit=False)
+            # address = address_form.save(commit=False)
+            # new_assessor.profile = profile
+            # new_assessor.addresses.add(address)
+            # custom_user_form.save_m2m()
             return redirect('home')
     else:
         custom_user_form = CustomUserForm(prefix='main')

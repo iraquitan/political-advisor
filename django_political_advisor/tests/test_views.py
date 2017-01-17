@@ -40,6 +40,16 @@ class AssessorSignUpView(TestCase):
                                          'city': 'Belém',
                                          'postcode': '66050110'},
                                         prefix='address')
+        self.post_valid_data = {
+            'id_main-first_name': 'Iraquitan',
+            'id_main-last_name': 'Cordeiro Filho',
+            'id_main-username': 'iraquitan',
+            'id_main-password': 'testPassword',
+            'id_main-email': 'testemail@gmail.com',
+            'id_profile-gender': 'M', 'id_profile-picture': None,
+            'id_address-country': 'Brazil', 'id_address-state': 'Pará',
+            'id_address-city': 'Belém', 'id_address-postcode': '66050110'
+        }
 
     def test_success(self):
         response = self.client.get(reverse('assessor-register'))
@@ -71,8 +81,10 @@ class AssessorSignUpView(TestCase):
         # data.update(self.profile)
         # data.update(self.address)
         # print(data)
-        # response = self.client.post('/user/assessor/register/', data)
-        # self.assertEqual(response.status_code, 200)
-        # # Check if redirect to the correct page
+        response = self.client.post(reverse('assessor-register'),
+                                    data=self.post_valid_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Check if redirect to the correct page
         # self.assertRedirects(response, reverse('home'))
+        # self.assertRedirects(response, reverse('home'), 302, 200)
         # # self.assertRedirects(response, '/')
