@@ -1,5 +1,5 @@
-DOCKER_COMPOSE = docker-compose
-DOCKER_COMPOSE_DEV = $(DOCKER_COMPOSE) -f docker-compose.dev.yml
+DOCKER_COMPOSE = docker-compose -f docker-compose.yml
+DOCKER_COMPOSE_DEV = $(DOCKER_COMPOSE) -f docker-compose.override.yml
 DOCKER_COMPOSE_PROD = $(DOCKER_COMPOSE) -f docker-compose.production.yml
 DOCKER_COMPOSE_TEST = $(DOCKER_COMPOSE) -f docker-compose.test.yml
 DOCKER_ARGS ?=
@@ -10,18 +10,26 @@ RUN_TIME = $(shell date +%Y-%m-%dT%H:%M:%S)
 .PHONY: docker-stop-all collectstatics makemigrations run test
 
 collectstatics:
+	$(DOCKER_COMPOSE_DEV) -p dev up -d $(DOCKER_ARGS)
 	$(DOCKER_COMPOSE_DEV) -p dev run web python manage.py collectstatic --noinput
 	$(DOCKER_COMPOSE_DEV) -p dev stop
 
 makemigrations:
+	$(DOCKER_COMPOSE_DEV) -p dev up -d $(DOCKER_ARGS)
 	$(DOCKER_COMPOSE_DEV) -p dev run web python manage.py makemigrations
 	$(DOCKER_COMPOSE_DEV) -p dev stop
 
+migrate: makemigrations
+	$(DOCKER_COMPOSE_DEV) -p dev up -d $(DOCKER_ARGS)
+	$(DOCKER_COMPOSE_DEV) -p dev run web python manage.py migrate
+	$(DOCKER_COMPOSE_DEV) -p dev stop
+
 migrations-check:
+	$(DOCKER_COMPOSE_DEV) -p dev up -d $(DOCKER_ARGS)
 	$(DOCKER_COMPOSE_DEV) -p dev run web python manage.py makemigrations --check --dry-run
 	$(DOCKER_COMPOSE_DEV) -p dev stop
 
-run: collectstatics
+runserver: collectstatics
 	$(DOCKER_COMPOSE_DEV) -p dev up $(DOCKER_ARGS)
 	$(DOCKER_COMPOSE_DEV) -p dev stop
 

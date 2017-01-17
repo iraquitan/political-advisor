@@ -1,43 +1,14 @@
-web:
-  restart: always
-  build: ./web
-  expose:
-    - "8000"
-  links:
-    - postgres:postgres
-    - redis:redis
-  volumes:
-    - /usr/src/app
-    - /usr/src/app/django_political_advisor/static
-  env_file: .env
-  environment:
-    DEBUG: 'true'
-  command: sh /usr/src/app/docker-web-script.sh
+version: '2'
 
-nginx:
-  restart: always
-  build: ./nginx
-  ports:
-    - "80:80"
-  volumes:
-    - /www/static
-  volumes_from:
-    - web
-  links:
-    - web:web
+services:
+  web:
+    image: python:3.5-onbuild
+    depends_on:
+      - postgres
+      - redis
 
-postgres:
-  restart: always
-  image: postgres:latest
-  ports:
-    - "5432:5432"
-  volumes:
-    - pgdata:/var/lib/postgresql/data/
+  postgres:
+    image: postgres:latest
 
-redis:
-  restart: always
-  image: redis:latest
-  ports:
-    - "6379:6379"
-  volumes:
-    - redisdata:/data
+  redis:
+    image: redis:latest

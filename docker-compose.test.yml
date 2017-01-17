@@ -1,30 +1,30 @@
 version: '2'
+
 services:
   sut:
     build:
-      context: ./web
+      context: .
       dockerfile: Dockerfile.test
+    volumes:
+      - .:/usr/src/app
+    env_file: .env
     depends_on:
       - postgres
       - redis
-    volumes:
-      - ./web:/usr/src/app
-    env_file: .env
     command: coverage run manage.py test django_political_advisor.tests
 
   postgres:
-    image: postgres:latest
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/
 
   redis:
-    image: redis:latest
     ports:
       - "6379:6379"
     volumes:
       - redisdata:/data
+
 volumes:
   pgdata:
   redisdata:

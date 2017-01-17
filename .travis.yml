@@ -29,7 +29,7 @@ matrix:
     - python: "3.5"
       env: TEST_PEP8=True
       install: pip install flake8
-      script: flake8 ./web/django_political_advisor
+      script: flake8 ./django_political_advisor
 
 before_install:
   - pip install codecov
@@ -37,11 +37,11 @@ before_install:
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -r ./web/requirements.txt
-  - pip install -r ./web/requirements-test.txt
+  - pip install -r ./requirements.txt
+  - pip install -r ./requirements-test.txt
 
 # command to run tests using coverage, e.g. python setup.py test
-script: coverage run --source='./web' ./web/manage.py test django_political_advisor
+script: coverage run manage.py test django_political_advisor
 
 after_success:
   - codecov
