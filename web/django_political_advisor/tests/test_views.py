@@ -42,8 +42,10 @@ class AssessorSignUpView(TestCase):
                                         prefix='address')
 
     def test_success(self):
-        response = self.client.get('/user/assessor/register/')
-
+        response = self.client.get(reverse('assessor-register'))
+        # Check url path
+        self.assertEqual(reverse('assessor-register'),
+                         '/user/assessor/register')
         # Check that the response is 200 OK.
         self.assertEqual(response.status_code, 200)
 

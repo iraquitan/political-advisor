@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.test import TestCase
 
 from ..models.models import CustomUser, Address, Profile
@@ -34,8 +35,19 @@ class CustomUserModelTest(TestCase):
         ).get()
         self.assertEqual(self.assessor.super_user, super_user)
 
-    def test_uniqueness(self):
-        self.assertTrue(False, 'Define uniqueness test.')
+    def test_username_uniqueness(self):
+        with self.assertRaises(IntegrityError):
+            CustomUser.objects.create(
+                username='test_su', password='test_password',
+                email='test_su2@test.com', user_type='SU', parent=None,
+                super_user=None)
+
+    def test_email_user_type_uniqueness(self):
+        with self.assertRaises(IntegrityError):
+            CustomUser.objects.create(
+                username='test_su2', password='test_password',
+                email='test_su@test.com', user_type='SU', parent=None,
+                super_user=None)
 
 
 class ProfileModelTest(TestCase):
