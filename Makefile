@@ -4,7 +4,8 @@ DOCKER_COMPOSE_PROD = $(DOCKER_COMPOSE) -f docker-compose.production.yml
 DOCKER_COMPOSE_TEST = $(DOCKER_COMPOSE) -f docker-compose.test.yml
 DOCKER_ARGS ?=
 DOCKER_VOLUMES ?= ci_redisdata ci_pgdata dev_redisdata dev_pgdata redisdata pgdata politicaladvisor_pgdata politicaladvisor_redisdata
-APP_LIST ?= django_political_advisor.test
+CMD ?=
+APP_LIST ?= political_advisor.test
 RUN_TIME = $(shell date +%Y-%m-%dT%H:%M:%S)
 
 .PHONY: docker-stop-all collectstatics makemigrations run test
@@ -22,6 +23,11 @@ makemigrations:
 migrate: makemigrations
 	$(DOCKER_COMPOSE_DEV) -p dev up -d $(DOCKER_ARGS)
 	$(DOCKER_COMPOSE_DEV) -p dev run web python manage.py migrate
+	$(DOCKER_COMPOSE_DEV) -p dev stop
+
+cmd:
+	$(DOCKER_COMPOSE_DEV) -p dev up -d $(DOCKER_ARGS)
+	$(DOCKER_COMPOSE_DEV) -p dev run web $(CMD)
 	$(DOCKER_COMPOSE_DEV) -p dev stop
 
 migrations-check:

@@ -10,7 +10,7 @@ class HomeView(TestCase):
         self.assertEqual(response1.status_code, 200)  # Check response is 200
         # Check template used
         self.assertTemplateUsed(response1,
-                                'django_political_advisor/home.html')
+                                'political_advisor/home.html')
         content1 = response1.content.decode("utf-8")
         counter1 = re.search("(?<=viewed <strong>)\d+(?=</strong> times!)",
                              content1)
@@ -19,8 +19,7 @@ class HomeView(TestCase):
         response2 = self.client.get('/')
         self.assertEqual(response2.status_code, 200)  # Check response is 200
         # Check template used
-        self.assertTemplateUsed(response2,
-                                'django_political_advisor/home.html')
+        self.assertTemplateUsed(response2, 'political_advisor/home.html')
         content2 = response2.content.decode("utf-8")
         counter2 = re.search("(?<=viewed <strong>)\d+(?=</strong> times!)",
                              content2)
@@ -54,7 +53,7 @@ class AssessorSignUpView(TestCase):
 
         # Check that template used is assessor_form.html
         self.assertTemplateUsed(response,
-                                'django_political_advisor/assessor_form.html')
+                                'political_advisor/assessor_form.html')
 
         # Register assessor
         response = self.client.post(reverse('assessor-register'),
@@ -73,4 +72,4 @@ class AssessorSignUpView(TestCase):
 
         # Check that template used is assessor_form.html
         self.assertTemplateUsed(response,
-                                'django_political_advisor/assessor_form.html')
+                                'political_advisor/assessor_form.html')

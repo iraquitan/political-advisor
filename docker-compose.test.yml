@@ -11,7 +11,7 @@ services:
     depends_on:
       - postgres
       - redis
-    command: coverage run manage.py test django_political_advisor.tests
+    command: coverage run manage.py test political_advisor
 
   postgres:
     ports:

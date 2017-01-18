@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # apps
-    'django_political_advisor',
+    'political_advisor.apps.PoliticalAdvisorAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'django_political_advisor.CustomUser'
+AUTH_USER_MODEL = 'political_advisor.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
