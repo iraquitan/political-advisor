@@ -3,8 +3,10 @@ import re
 from django.test import TestCase
 from django.urls import reverse
 
+from political_advisor.models import CustomUser
 
-class HomeView(TestCase):
+
+class HomeViewTest(TestCase):
     def test_homepage(self):
         response1 = self.client.get('/')
         self.assertEqual(response1.status_code, 200)  # Check response is 200
@@ -29,7 +31,114 @@ class HomeView(TestCase):
         self.assertGreater(counter2, counter1)
 
 
-class AssessorSignUpView(TestCase):
+class LoginViewTest(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create(username='test_user',
+                                              email='test@test.com',
+                                              password='testPassword')
+        self.login_data = {'email': 'test@test.com',
+                           'password': 'testPassword'}
+
+    def test_success(self):
+        response = self.client.get(reverse('login'))
+        # Check if response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+        response_post = self.client.post(reverse('login'), self.login_data,
+                                         follow=True)
+        # Check if redirects correctly
+        self.assertRedirects(response_post, reverse('home'))
+
+    def test_empty_data_failure(self):
+        response = self.client.get(reverse('login'))
+        # Check if response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+
+        response_post = self.client.post(reverse('login'), {}, follow=True)
+        # Check template used
+        self.assertTemplateUsed(response_post, 'political_advisor/form.html')
+        # Check if response is 200 OK
+        self.assertEqual(response_post.status_code, 200)
+
+
+class SignupViewTest(TestCase):
+    def setUp(self):
+        self.valid_data = {
+            'first_name': 'Iraquitan',
+            'last_name': 'Cordeiro Filho',
+            'username': 'iraquitan',
+            'password': 'testPassword',
+            'email': 'testemail@gmail.com',
+        }
+
+    def test_success(self):
+        response = self.client.get(reverse('signup'))
+        # Check is response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+
+        response_post = self.client.post(reverse('signup'), self.valid_data,
+                                         follow=True)
+        self.assertTemplateUsed(response_post, 'political_advisor/home.html')
+        self.assertRedirects(response_post, reverse('home'))
+
+    def test_empty_data_failure(self):
+        response = self.client.get(reverse('signup'))
+        # Check is response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+
+        response_post = self.client.post(reverse('signup'), {}, follow=True)
+        self.assertTemplateUsed(response_post, 'political_advisor/form.html')
+        self.assertEqual(response_post.status_code, 200)
+
+
+class AssessorLoginViewTest(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create(username='test_user',
+                                              email='test@test.com',
+                                              password='testPassword',
+                                              user_type='SU',)
+        self.assessor = CustomUser.objects.create(
+            username='test_auser', email='test_au@test.com',
+            password='testPassword', user_type='AU', parent=self.user,
+            super_user=self.user,
+        )
+        self.login_data = {'email': 'test_au@test.com',
+                           'password': 'testPassword'}
+
+    def test_success(self):
+        response = self.client.get(reverse('assessor-login'))
+        # Check if response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+        response_post = self.client.post(reverse('assessor-login'),
+                                         self.login_data, follow=True)
+        # Check if redirects correctly
+        self.assertRedirects(response_post, reverse('home'))
+
+    def test_empty_data_failure(self):
+        response = self.client.get(reverse('assessor-login'))
+        # Check if response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+
+        response_post = self.client.post(reverse('assessor-login'), {},
+                                         follow=True)
+        # Check template used
+        self.assertTemplateUsed(response_post, 'political_advisor/form.html')
+        # Check if response is 200 OK
+        self.assertEqual(response_post.status_code, 200)
+
+
+class AssessorSignUpViewTest(TestCase):
     def setUp(self):
         self.post_valid_data = {
             'main-first_name': 'Iraquitan',

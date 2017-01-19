@@ -1,0 +1,9 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+source =
+    political_advisor/
+    mainsite/
+
+[report]
+precision = 2
