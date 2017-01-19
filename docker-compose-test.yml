@@ -1,19 +1,14 @@
 version: '2'
 
 services:
-  web:
+  sut:
     extends:
       file: docker-compose-common.yml
-      service: web
-    ports:
-      - "8000:8000"
-    environment:
-      DEBUG: 'true'
-      PYTHONUNBUFFERED: 0
+      service: sut
     depends_on:
       - postgres
       - redis
-    command: python manage.py runserver 0.0.0.0:8000
+    command: coverage run manage.py test political_advisor
 
   postgres:
     extends:

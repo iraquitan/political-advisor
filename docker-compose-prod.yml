@@ -2,12 +2,15 @@ version: '2'
 
 services:
   web:
+    extends:
+      file: docker-compose-common.yml
+      service: web
     restart: always
     expose:
       - "8000"
-    volumes:
-      - .:/usr/src/app/
-    env_file: .env
+    depends_on:
+      - postgres
+      - redis
     command: sh /usr/src/app/docker-web-script.sh
 
   nginx:
@@ -24,18 +27,18 @@ services:
       - web
 
   postgres:
+    file: docker-compose-common.yml
+      service: postgres
     restart: always
     ports:
       - "5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data/
 
   redis:
+    file: docker-compose-common.yml
+      service: redis
     restart: always
     ports:
       - "6379"
-    volumes:
-      - redisdata:/data
 
 volumes:
   pgdata:
