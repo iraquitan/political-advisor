@@ -1,112 +1,107 @@
-# Docker flags
-.DOCKER_COMPOSE = docker-compose
-.DOCKER_COMPOSE_PROD = docker-compose -f docker-compose-prod.yml
-.DOCKER_COMPOSE_TEST = docker-compose -f docker-compose-test.yml
-DOCKER_ARGS ?=
-DOCKER_OUTPUT ?= true
-.DOCKER_OUT_TXT = > /dev/null
-ifneq ($(DOCKER_OUTPUT),true)
-    .DOCKER_OUT_TXT = &> /dev/null
-endif
-.DOCKER_VOLUMES = ci_redisdata ci_pgdata dev_redisdata dev_pgdata
-.DOCKER_NETWORKS = ci_default dev_default
-
 # Utils
 .INDENT = \\t\-\>
 .RUN_TIME = $(shell date +%Y-%m-%dT%H:%M:%S)
 
-#
+# Docker flags
+.DOCKER_COMPOSE = docker-compose
+.DOCKER_COMPOSE_PROD = docker-compose -f docker-compose-prod.yml
+.DOCKER_COMPOSE_TEST = docker-compose -f docker-compose-test.yml
+.DOCKER_OUT_TXT = > /dev/null
+ifneq ($(DOCKER_OUTPUT),true)
+    .DOCKER_OUT_TXT = &> /dev/null
+endif
+.DOCKER_VOLUMES = politicaladvisor_redisdata politicaladvisor_pgdata
+.DOCKER_NETWORKS = politicaladvisor_default
+
+# Docker args
+DOCKER_ARGS ?=
+DOCKER_OUTPUT ?= true
+
+# Input args
 CMD ?=
 APP_LIST ?= political_advisor.test
 
-.PHONY: docker-stop-all collectstatics makemigrations runserver test
+.PHONY: collectstatics makemigrations runserver test flake8 ci
 
-collectstatics: start-docker-dev
-	$(.DOCKER_COMPOSE) -p dev run --rm web python manage.py collectstatic --noinput
+collectstatics: start-docker
+	$(.DOCKER_COMPOSE) run --rm web python manage.py collectstatic --noinput
 
-makemigrations: start-docker-dev
-	$(.DOCKER_COMPOSE) -p dev run --rm web python manage.py makemigrations
+makemigrations: start-docker
+	$(.DOCKER_COMPOSE) run --rm web python manage.py makemigrations
 
-makemigrations-check: start-docker-dev
-	$(.DOCKER_COMPOSE) -p dev run --rm web python manage.py makemigrations --check --dry-run
+makemigrations-check: start-docker
+	$(.DOCKER_COMPOSE) run --rm web python manage.py makemigrations --check --dry-run
 
 migrate: makemigrations-check
-	$(.DOCKER_COMPOSE) -p dev run --rm web python manage.py migrate
+	$(.DOCKER_COMPOSE) run --rm web python manage.py migrate
 
-cmd: start-docker-dev
-	$(.DOCKER_COMPOSE) -p dev run --rm web $(CMD)
+web-run: start-docker
+	$(.DOCKER_COMPOSE) run --rm web $(CMD)
 
-runserver:
-	$(.DOCKER_COMPOSE) -p dev up $(DOCKER_ARGS)
-	$(.DOCKER_COMPOSE) -p dev stop
+test-run: test
+	$(.DOCKER_COMPOSE_TEST) run --rm sut $(CMD)
 
-test: start-docker-test
+runserver: start-docker
+	$(.DOCKER_COMPOSE) up $(DOCKER_ARGS) web
+
+test: makemigrations-check
 	@echo Running tests
-	@echo $(.INDENT) checking migrations;
-	@$(.DOCKER_COMPOSE_TEST) -p ci run --rm sut python manage.py makemigrations --check --dry-run
-	@docker wait ci_sut_1 $(.DOCKER_OUT_TXT);
-	@docker logs --since $(.RUN_TIME) ci_sut_1
+	@$(.DOCKER_COMPOSE_TEST) run --rm sut
 
-flake8: start-docker-test
+flake8: start-docker
 	@echo Running python PEP8 lint
-	@$(.DOCKER_COMPOSE_TEST) -p ci run --rm sut flake8
+	@$(.DOCKER_COMPOSE_TEST) run --rm sut flake8
 
 ci: test
 	@echo Generating coverage report
-	@$(.DOCKER_COMPOSE_TEST) -p ci run --rm sut coverage report
+	@$(.DOCKER_COMPOSE_TEST) run --rm sut coverage report
 
-start-docker-test:
-	@echo Starting docker test containers
-	@if [ $(shell docker ps -a | grep -ci ci_sut) -eq 0 ]; then \
-		echo $(.INDENT) starting test containers; \
-		$(.DOCKER_COMPOSE_TEST) -p ci up -d $(.DOCKER_OUT_TXT); \
-	elif [ $(shell docker ps | grep -ci ci_sut) -eq 0 ]; then \
-		echo $(.INDENT) restarting test containers; \
-		$(.DOCKER_COMPOSE_TEST) -p ci restart sut $(.DOCKER_OUT_TXT); \
+start-docker:
+	@echo Starting docker containers
+	@if [ $(shell docker ps -a | grep -ci postgres) -eq 0 ]; then \
+		echo $(.INDENT) starting postgres; \
+		$(.DOCKER_COMPOSE) up -d postgres $(.DOCKER_OUT_TXT); \
+	elif [ $(shell docker ps | grep -ci postgres) -eq 0 ]; then \
+		echo $(.INDENT) restarting postgres; \
+		$(.DOCKER_COMPOSE) restart postgres $(.DOCKER_OUT_TXT); \
 	fi
 
-start-docker-dev:
-	@echo Starting docker dev containers
-	@if [ $(shell docker ps -a | grep -ci dev) -eq 0 ]; then \
-		echo $(.INDENT) starting dev containers; \
-		$(.DOCKER_COMPOSE) -p dev up -d $(.DOCKER_OUT_TXT); \
-	elif [ $(shell docker ps | grep -ci dev) -eq 0 ]; then \
-		echo $(.INDENT) restarting dev containers; \
-		$(.DOCKER_COMPOSE) -p dev restart $(.DOCKER_OUT_TXT); \
+	@if [ $(shell docker ps -a | grep -ci redis) -eq 0 ]; then \
+		echo $(.INDENT) starting redis; \
+		$(.DOCKER_COMPOSE) up -d redis $(.DOCKER_OUT_TXT); \
+	elif [ $(shell docker ps | grep -ci redis) -eq 0 ]; then \
+		echo $(.INDENT) restarting redis; \
+		$(.DOCKER_COMPOSE) restart redis $(.DOCKER_OUT_TXT); \
 	fi
 
 stop-docker:
 	@echo Stopping docker containers
-	@if [ $(shell docker ps -a | grep -ci ci) -gt 0 ]; then \
-		echo $(.INDENT) stopping test containers; \
-		$(.DOCKER_COMPOSE_TEST) -p ci stop $(.DOCKER_OUT_TXT); \
+	@if [ $(shell docker ps -a | grep -ci postgres) -eq 1 ]; then \
+		echo $(.INDENT) stopping postgres; \
+		$(.DOCKER_COMPOSE) stop postgres $(.DOCKER_OUT_TXT); \
 	fi
 
-	@if [ $(shell docker ps -a | grep -ci dev) -gt 0 ]; then \
-		echo $(.INDENT) stopping dev containers; \
-		$(.DOCKER_COMPOSE) -p dev stop $(.DOCKER_OUT_TXT); \
+	@if [ $(shell docker ps -a | grep -ci redis) -eq 1 ]; then \
+		echo $(.INDENT) stopping redis; \
+		$(.DOCKER_COMPOSE) stop redis $(.DOCKER_OUT_TXT); \
 	fi
 
-	@if [ $(shell docker ps -a | grep -ci prod) -gt 0 ]; then \
-		echo $(.INDENT) stopping prod containers; \
-		$(.DOCKER_COMPOSE_PROD) -p prod stop $(.DOCKER_OUT_TXT); \
-	fi
+docker-ps:
+	@echo Showing project docker related containers
+	@docker ps -a | grep politicaladvisor
 
 clean-docker:
 	@echo Removing docker containers
-	@if [ $(shell docker ps -a | grep -ci ci) -gt 0 ]; then \
-		echo removing test containers; \
-		$(.DOCKER_COMPOSE_TEST) -p ci down $(.DOCKER_OUT_TXT); \
+	@if [ $(shell docker ps -a | grep -ci postgres) -eq 1 ]; then \
+		echo $(.INDENT) removing postgres; \
+		$(.DOCKER_COMPOSE) stop postgres $(.DOCKER_OUT_TXT); \
+		$(.DOCKER_COMPOSE) rm -f -v postgres $(.DOCKER_OUT_TXT); \
 	fi
 
-	@if [ $(shell docker ps -a | grep -ci dev) -gt 0 ]; then \
-		echo removing dev containers; \
-		$(.DOCKER_COMPOSE) -p dev down $(.DOCKER_OUT_TXT); \
-	fi
-
-	@if [ $(shell docker ps -a | grep -ci prod) -gt 0 ]; then \
-		echo removing prod containers; \
-		$(.DOCKER_COMPOSE_PROD) -p prod down $(.DOCKER_OUT_TXT); \
+	@if [ $(shell docker ps -a | grep -ci redis) -eq 1 ]; then \
+		echo $(.INDENT) removing redis; \
+		$(.DOCKER_COMPOSE) stop redis $(.DOCKER_OUT_TXT); \
+		$(.DOCKER_COMPOSE) rm -f -v redis $(.DOCKER_OUT_TXT); \
 	fi
 
 .clean-docker-volume:
@@ -118,3 +113,37 @@ clean-docker:
 	@docker network rm $(.DOCKER_NETWORKS)
 
 clean: clean-docker .clean-docker-volume .clean-docker-network
+
+help:
+	@echo "    help"
+	@echo "        Display help for make targets."
+	@echo "    collectstatics"
+	@echo "        Collect statics for Django app."
+	@echo "    makemigrations"
+	@echo "        Generate migrations for Django app."
+	@echo "    makemigrations-check"
+	@echo "        Check migrations for Django app."
+	@echo "    migrate"
+	@echo "        Migrate the database for Django app."
+	@echo "    web-run CMD='command'"
+	@echo "        Run command using the web Docker container."
+	@echo "    test-run CMD='command'"
+	@echo "        Run command using the sut Docker container."
+	@echo "    runserver DOCKER_ARGS=-d"
+	@echo "        Run Django app server."
+	@echo "    test"
+	@echo "        Run tests"
+	@echo "    flake8"
+	@echo "        Run python PEP8 lint."
+	@echo "    ci"
+	@echo "        Continuous integration that generates coverage report."
+	@echo "    docker-ps"
+	@echo "        Shows Docker containers related to project."
+	@echo "    start-docker"
+	@echo "        Start Docker containers."
+	@echo "    stop-docker"
+	@echo "        Stop Docker containers."
+	@echo "    clean-docker"
+	@echo "        Stops and remove Docker containers."
+	@echo "    clean"
+	@echo "        Clean Docker environment by removing containers, volumes and networks."
