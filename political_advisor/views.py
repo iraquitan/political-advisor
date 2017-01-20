@@ -1,5 +1,7 @@
 import os
 
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from redis import Redis
 
@@ -37,7 +39,7 @@ def signup(request):
                   {'form': form, 'title': title, 'submit': submit})
 
 
-def login(request):
+def login_view(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = LoginForm(request.POST)
@@ -45,9 +47,17 @@ def login(request):
         if form.is_valid():
             # process the data in form.cleaned_data as required
             # redirect to a new URL:
-            return redirect('home')
-
-            # if a GET (or any other method) we'll create a blank form
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request,
+                                 "Welcome {user}".format(user.first_name))
+                return redirect('home')
+            else:
+                messages.error(request, "Login failed, user not found "
+                                        "in database!")
     else:
         form = LoginForm()
     title = "Login"

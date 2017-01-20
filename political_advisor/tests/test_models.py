@@ -49,6 +49,9 @@ class CustomUserModelTest(TestCase):
                 email='test_su@test.com', user_type='SU', parent=None,
                 super_user=None)
 
+    def test_user_group(self):
+        self.assertEqual(self.super_user.groups.count(), 0)
+
 
 class ProfileModelTest(TestCase):
     def setUp(self):
