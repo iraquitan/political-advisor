@@ -2,7 +2,8 @@ version: '2'
 
 services:
   web:
-    image: python:3.5-onbuild
+    build:
+      context: .
     volumes:
       - .:/usr/src/app
     env_file: .env
