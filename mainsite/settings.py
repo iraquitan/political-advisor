@@ -112,6 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'political_advisor.CustomUser'
+AUTHENTICATION_BACKENDS = ['political_advisor.models.models.EmailBackend']
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

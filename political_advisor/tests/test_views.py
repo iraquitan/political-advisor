@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
@@ -33,9 +34,10 @@ class HomeViewTest(TestCase):
 
 class LoginViewTest(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create(username='test_user',
-                                              email='test@test.com',
-                                              password='testPassword')
+        self.user = CustomUser.objects.create_user(username='test_user',
+                                                   email='test@test.com',
+                                                   password='testPassword',
+                                                   first_name='Test')
         self.login_data = {'email': 'test@test.com',
                            'password': 'testPassword'}
 
@@ -49,6 +51,10 @@ class LoginViewTest(TestCase):
                                          follow=True)
         # Check if redirects correctly
         self.assertRedirects(response_post, reverse('home'))
+        # Check messages
+        messages = list(response_post.context['messages'])
+        for message in messages:
+            self.assertEqual(message.message, 'Welcome Test')
 
     def test_empty_data_failure(self):
         response = self.client.get(reverse('login'))
@@ -100,11 +106,10 @@ class SignupViewTest(TestCase):
 
 class AssessorLoginViewTest(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create(username='test_user',
-                                              email='test@test.com',
-                                              password='testPassword',
-                                              user_type='SU',)
-        self.assessor = CustomUser.objects.create(
+        self.user = CustomUser.objects.create_user(username='test_user',
+                                                   email='test@test.com',
+                                                   password='testPassword',)
+        self.assessor = CustomUser.objects.create_user(
             username='test_auser', email='test_au@test.com',
             password='testPassword', user_type='AU', parent=self.user,
             super_user=self.user,

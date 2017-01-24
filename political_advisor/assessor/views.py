@@ -15,13 +15,13 @@ def login_view(request):
         if form.is_valid():
             # process the data in form.cleaned_data as required
             # redirect to a new URL:
-            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            user = authenticate(username=email, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request,
-                                 _("Welcome {user}").format(user.first_name))
+                messages.success(
+                    request, _("Welcome {user}").format(user=user.first_name))
                 return redirect('home')
             else:
                 messages.error(request, _("Login failed, user not found "
