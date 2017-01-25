@@ -14,10 +14,11 @@ class EmailBackend(ModelBackend):
     Authenticates against settings.AUTH_USER_MODEL using email.
     """
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, username=None, password=None, user_type=None,
+                     **kwargs):
         UserModel = get_user_model()
         try:
-            user = UserModel.objects.get(email=username)
+            user = UserModel.objects.get(email=username, user_type=user_type)
         except UserModel.DoesNotExist:
             return None
         else:

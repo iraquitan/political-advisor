@@ -17,7 +17,9 @@ def login_view(request):
             # redirect to a new URL:
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=email, password=password)
+            user_type = 'AU'
+            user = authenticate(username=email, password=password,
+                                user_type=user_type)
             if user is not None:
                 login(request, user)
                 messages.success(

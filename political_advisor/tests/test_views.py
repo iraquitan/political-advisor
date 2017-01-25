@@ -1,8 +1,8 @@
 import re
 
-from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from political_advisor.models import CustomUser
 
@@ -40,6 +40,8 @@ class LoginViewTest(TestCase):
                                                    first_name='Test')
         self.login_data = {'email': 'test@test.com',
                            'password': 'testPassword'}
+        self.invalid_login_data = {'email': 'test2@test.com',
+                                   'password': 'testPassword'}
 
     def test_success(self):
         response = self.client.get(reverse('login'))
@@ -54,7 +56,8 @@ class LoginViewTest(TestCase):
         # Check messages
         messages = list(response_post.context['messages'])
         for message in messages:
-            self.assertEqual(message.message, 'Welcome Test')
+            self.assertEqual(message.message, _('Welcome {user.first_name}'
+                                                .format(user=self.user)))
 
     def test_empty_data_failure(self):
         response = self.client.get(reverse('login'))
@@ -68,6 +71,25 @@ class LoginViewTest(TestCase):
         self.assertTemplateUsed(response_post, 'political_advisor/form.html')
         # Check if response is 200 OK
         self.assertEqual(response_post.status_code, 200)
+
+    def test_unsigned_user(self):
+        response = self.client.get(reverse('login'))
+        # Check if response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+
+        response_post = self.client.post(reverse('login'),
+                                         self.invalid_login_data, follow=True)
+        # Check template used
+        self.assertTemplateUsed(response_post, 'political_advisor/form.html')
+        # Check if response is 200 OK
+        self.assertEqual(response_post.status_code, 200)
+        # Check messages
+        messages = list(response_post.context['messages'])
+        for message in messages:
+            self.assertEqual(message.message, _('Login failed, user not '
+                                                'found in database!'))
 
 
 class SignupViewTest(TestCase):
@@ -116,6 +138,8 @@ class AssessorLoginViewTest(TestCase):
         )
         self.login_data = {'email': 'test_au@test.com',
                            'password': 'testPassword'}
+        self.invalid_login_data = {'email': 'test_au2@test.com',
+                                   'password': 'testPassword'}
 
     def test_success(self):
         response = self.client.get(reverse('assessor-login'))
@@ -141,6 +165,25 @@ class AssessorLoginViewTest(TestCase):
         self.assertTemplateUsed(response_post, 'political_advisor/form.html')
         # Check if response is 200 OK
         self.assertEqual(response_post.status_code, 200)
+
+    def test_unsigned_user(self):
+        response = self.client.get(reverse('assessor-login'))
+        # Check if response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Check template used
+        self.assertTemplateUsed(response, 'political_advisor/form.html')
+
+        response_post = self.client.post(reverse('assessor-login'),
+                                         self.invalid_login_data, follow=True)
+        # Check template used
+        self.assertTemplateUsed(response_post, 'political_advisor/form.html')
+        # Check if response is 200 OK
+        self.assertEqual(response_post.status_code, 200)
+        # Check messages
+        messages = list(response_post.context['messages'])
+        for message in messages:
+            self.assertEqual(message.message, _('Login failed, user not '
+                                                'found in database!'))
 
 
 class AssessorSignUpViewTest(TestCase):

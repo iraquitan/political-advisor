@@ -30,8 +30,6 @@ class CustomUserFormTest(TestCase):
         self.assertEqual(form.errors, {
             'email': ['Enter a valid email address.'],
             'password': ['This field is required.'],
-            'username': ['Enter a valid username. This value may contain only '
-                         'letters, numbers, and @/./+/-/_ characters.'],
         })
 
 

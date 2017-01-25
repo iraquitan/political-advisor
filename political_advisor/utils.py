@@ -1,3 +1,5 @@
+import hashlib
+
 from django import forms
 
 
@@ -13,3 +15,9 @@ def placeholderify(form):
                     field.widget.attrs.update({'placeholder': field.label,
                                                'class': 'form-control'})
     return WrappedForm
+
+
+def get_unique_username(obj):
+    username = hashlib.sha1()
+    username.update(obj.email.encode('utf-8') + obj.user_type.encode('utf-8'))
+    return username.hexdigest()

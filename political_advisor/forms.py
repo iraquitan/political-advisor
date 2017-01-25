@@ -10,7 +10,7 @@ from .utils import placeholderify
 class CustomUserForm(ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'password']
+        fields = ['first_name', 'last_name', 'email', 'password']
         widgets = {
             'password': forms.PasswordInput()
         }

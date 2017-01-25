@@ -6,18 +6,18 @@ from ..models.models import CustomUser, Address, Profile
 
 class CustomUserModelTest(TestCase):
     def setUp(self):
-        self.super_user = CustomUser.objects.create(
+        self.super_user = CustomUser.objects.create_user(
             username='test_su', password='test_password',
             email='test_su@test.com', user_type='SU', parent=None,
             super_user=None
         )
-        self.assessor1 = CustomUser.objects.create(
+        self.assessor1 = CustomUser.objects.create_user(
             username='test_parent', password='test_password',
             email='test_parent@test.com', user_type='AU',
             parent=self.super_user,
             super_user=self.super_user
         )
-        self.assessor2 = CustomUser.objects.create(
+        self.assessor2 = CustomUser.objects.create_user(
             username='test_assessor', password='test_password',
             email='assessor@test.com', user_type='AU', parent=self.assessor1,
             super_user=self.super_user
@@ -37,14 +37,14 @@ class CustomUserModelTest(TestCase):
 
     def test_username_uniqueness(self):
         with self.assertRaises(IntegrityError):
-            CustomUser.objects.create(
+            CustomUser.objects.create_user(
                 username='test_su', password='test_password',
-                email='test_su2@test.com', user_type='SU', parent=None,
+                email='test_su@test.com', user_type='SU', parent=None,
                 super_user=None)
 
     def test_email_user_type_uniqueness(self):
         with self.assertRaises(IntegrityError):
-            CustomUser.objects.create(
+            CustomUser.objects.create_user(
                 username='test_su2', password='test_password',
                 email='test_su@test.com', user_type='SU', parent=None,
                 super_user=None)
