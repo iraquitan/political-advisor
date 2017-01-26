@@ -95,11 +95,12 @@ class LoginViewTest(TestCase):
 class SignupViewTest(TestCase):
     def setUp(self):
         self.valid_data = {
-            'first_name': 'Iraquitan',
-            'last_name': 'Cordeiro Filho',
-            'username': 'iraquitan',
-            'password': 'testPassword',
-            'email': 'testemail@gmail.com',
+            'main-first_name': 'Iraquitan',
+            'main-last_name': 'Cordeiro Filho',
+            'main-username': 'iraquitan',
+            'main-password': 'testPassword',
+            'main-email': 'testemail@gmail.com',
+            'profile-gender': 'M', 'profile-picture': '',
         }
 
     def test_success(self):
@@ -107,7 +108,8 @@ class SignupViewTest(TestCase):
         # Check is response is 200 OK
         self.assertEqual(response.status_code, 200)
         # Check template used
-        self.assertTemplateUsed(response, 'political_advisor/form.html')
+        self.assertTemplateUsed(response,
+                                'political_advisor/assessor_form.html')
 
         response_post = self.client.post(reverse('signup'), self.valid_data,
                                          follow=True)
@@ -119,10 +121,12 @@ class SignupViewTest(TestCase):
         # Check is response is 200 OK
         self.assertEqual(response.status_code, 200)
         # Check template used
-        self.assertTemplateUsed(response, 'political_advisor/form.html')
+        self.assertTemplateUsed(response,
+                                'political_advisor/assessor_form.html')
 
         response_post = self.client.post(reverse('signup'), {}, follow=True)
-        self.assertTemplateUsed(response_post, 'political_advisor/form.html')
+        self.assertTemplateUsed(response_post,
+                                'political_advisor/assessor_form.html')
         self.assertEqual(response_post.status_code, 200)
 
 

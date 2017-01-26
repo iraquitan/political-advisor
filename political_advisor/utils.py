@@ -1,6 +1,10 @@
 import hashlib
+import sys
 
 from django import forms
+
+if sys.version_info < (3, 6):
+    import sha3
 
 
 def placeholderify(form):
@@ -18,6 +22,16 @@ def placeholderify(form):
 
 
 def get_unique_username(obj):
-    username = hashlib.sha1()
-    username.update(obj.email.encode('utf-8') + obj.user_type.encode('utf-8'))
+    username = hashlib.sha3_512()
+    if obj.user_type == 'AU':
+        key_comb = (obj.email.encode('utf-8') +
+                    obj.user_type.encode('utf-8') +
+                    obj.super_user.username.encode('utf-8'))
+    elif obj.user_type == 'SU':
+        key_comb = (obj.email.encode('utf-8') +
+                    obj.user_type.encode('utf-8') +
+                    b'')
+    else:
+        raise TypeError("'user_type' {obj.user_type} not allowed".format(obj))
+    username.update(key_comb)
     return username.hexdigest()

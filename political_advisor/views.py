@@ -2,11 +2,13 @@ import os
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from redis import Redis
 
-from .forms import CustomUserForm, LoginForm
+from .models.models import CustomUser
+from .forms import CustomUserForm, LoginForm, ProfileForm
 
 redis = Redis(host=os.environ['REDIS_SERVICE'], port=6379)
 
@@ -21,23 +23,36 @@ def home(request):
                   context=context)
 
 
+@transaction.atomic
 def signup(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = CustomUserForm(request.POST)
+        custom_user_form = CustomUserForm(request.POST, prefix='main')
+        profile_form = ProfileForm(request.POST, prefix='profile')
         # check whether it's valid:
-        if form.is_valid():
+        if all([custom_user_form.is_valid(), profile_form.is_valid()]):
             # process the data in form.cleaned_data as required
             # redirect to a new URL:
+            user_data = custom_user_form.cleaned_data
+            profile_data = profile_form.cleaned_data
+            user = CustomUser.objects.create_user(**user_data)
+            # Update user profile
+            user.profile.gender = profile_data.get('gender')
+            user.profile.picture = profile_data.get('picture')
+            user.save()
+            messages.success(request, _("Your account was successfully "
+                                        "created!"))
             return redirect('home')
 
             # if a GET (or any other method) we'll create a blank form
     else:
-        form = CustomUserForm()
+        custom_user_form = CustomUserForm(prefix='main')
+        profile_form = ProfileForm(prefix='profile')
     title = _("Sign Up")
     submit = _("Register")
-    return render(request, 'political_advisor/form.html',
-                  {'form': form, 'title': title, 'submit': submit})
+    return render(request, 'political_advisor/assessor_form.html',
+                  {'form': custom_user_form, 'profile': profile_form,
+                   'title': title, 'submit': submit})
 
 
 def login_view(request):
