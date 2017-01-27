@@ -7,13 +7,11 @@ class CustomUserFormTest(TestCase):
     def setUp(self):
         self.form_valid_data = {
             'first_name': 'Iraquitan', 'last_name': 'Cordeiro Filho',
-            'username': "iraquitan", 'email': "leela@example.com",
-            'password': "test_password",
+            'email': "leela@example.com", 'password': "test_password",
         }
         self.form_invalid_data = {
             'first_name': 'Iraquitan', 'last_name': 'Cordeiro Filho',
-            'username': "$", 'email': "e",
-            'password': "",
+            'email': "e", 'password': "",
         }
 
     def test_valid_data(self):

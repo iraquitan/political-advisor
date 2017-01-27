@@ -115,6 +115,14 @@ class SignupViewTest(TestCase):
                                          follow=True)
         self.assertTemplateUsed(response_post, 'political_advisor/home.html')
         self.assertRedirects(response_post, reverse('home'))
+        # Check messages
+        messages = list(response_post.context['messages'])
+        self.assertGreater(len(messages), 0, "Should have one success message")
+        for message in messages:
+            self.assertEqual(message.message, _("Your account was "
+                                                "successfully created!"))
+        user = CustomUser.objects.get(email=self.valid_data.get('main-email'))
+        self.assertTrue(user.user_type, 'SU')
 
     def test_empty_data_failure(self):
         response = self.client.get(reverse('signup'))
@@ -192,7 +200,7 @@ class AssessorLoginViewTest(TestCase):
 
 class AssessorSignUpViewTest(TestCase):
     def setUp(self):
-        self.post_valid_data = {
+        self.valid_data = {
             'main-first_name': 'Iraquitan',
             'main-last_name': 'Cordeiro Filho',
             'main-username': 'iraquitan',
@@ -208,29 +216,31 @@ class AssessorSignUpViewTest(TestCase):
         # Check url path
         self.assertEqual(reverse('assessor-register'),
                          '/user/assessor/register')
-
         # Check that the response is 200 OK.
         self.assertEqual(response.status_code, 200)
-
         # Check that template used is assessor_form.html
         self.assertTemplateUsed(response,
                                 'political_advisor/assessor_form.html')
-
         # Register assessor
-        response = self.client.post(reverse('assessor-register'),
-                                    data=self.post_valid_data, follow=True,
-                                    secure=False)
-
+        response_post = self.client.post(reverse('assessor-register'),
+                                         data=self.valid_data,
+                                         follow=True, secure=False)
         # Check if redirects to the correct page
-        self.assertRedirects(response, reverse('home'), 302, 200)
+        self.assertRedirects(response_post, reverse('home'), 302, 200)
+        # Check messages
+        messages = list(response_post.context['messages'])
+        self.assertGreater(len(messages), 0, "Should have one success message")
+        for message in messages:
+            self.assertEqual(message.message, _("Your account was "
+                                                "successfully created!"))
+        user = CustomUser.objects.get(email=self.valid_data.get('main-email'))
+        self.assertTrue(user.user_type, 'AU')
 
     def test_failure(self):
         response = self.client.post(reverse('assessor-register'),
                                     data={}, follow=True)
-
         # Check that the response is 200 OK.
         self.assertEqual(response.status_code, 200)
-
         # Check that template used is assessor_form.html
         self.assertTemplateUsed(response,
                                 'political_advisor/assessor_form.html')

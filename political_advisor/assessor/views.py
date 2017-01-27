@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 
+from ..models.models import CustomUser
 from ..forms import CustomUserForm, LoginForm, AddressForm, ProfileForm
 
 
@@ -44,12 +45,19 @@ def register_assessor(request):
 
         if all([custom_user_form.is_valid(), profile_form.is_valid(),
                 address_form.is_valid()]):
-            # new_assessor = custom_user_form.save()
-            # profile = profile_form.save(commit=False)
-            # address = address_form.save(commit=False)
-            # new_assessor.profile = profile
-            # new_assessor.addresses.add(address)
-            # custom_user_form.save_m2m()
+            user_data = custom_user_form.cleaned_data
+            profile_data = profile_form.cleaned_data
+            address_data = address_form.cleaned_data
+            user = CustomUser.objects.create_user(**user_data)
+            user.user_type = 'AU'
+            # Update user profile
+            user.profile.gender = profile_data.get('gender')
+            user.profile.picture = profile_data.get('picture')
+            # Update address
+            user.addresses.create(**address_data)
+            user.save()
+            messages.success(request, _("Your account was successfully "
+                                        "created!"))
             return redirect('home')
     else:
         custom_user_form = CustomUserForm(prefix='main')
