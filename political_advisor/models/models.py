@@ -99,6 +99,7 @@ class Address(AbstractModel):
                              related_name=_('addresses'),
                              related_query_name=_('address'),
                              on_delete=models.CASCADE)
+    street = models.CharField(max_length=150)
     country = models.CharField(max_length=30)
     state = models.CharField(max_length=30)
     city = models.CharField(max_length=30)

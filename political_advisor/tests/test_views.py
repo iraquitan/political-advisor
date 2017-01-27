@@ -7,6 +7,16 @@ from django.utils.translation import gettext_lazy as _
 from political_advisor.models import CustomUser
 
 
+class LoggedInTestCase(TestCase):
+
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(email='test@test.com',
+                                                   password='testPassword',)
+        self.is_logged_in = self.client.login(username='test@test.com',
+                                              password='testPassword',
+                                              user_type='SU')
+
+
 class HomeViewTest(TestCase):
     def test_homepage(self):
         response1 = self.client.get('/')
@@ -34,8 +44,7 @@ class HomeViewTest(TestCase):
 
 class LoginViewTest(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username='test_user',
-                                                   email='test@test.com',
+        self.user = CustomUser.objects.create_user(email='test@test.com',
                                                    password='testPassword',
                                                    first_name='Test')
         self.login_data = {'email': 'test@test.com',
@@ -121,8 +130,13 @@ class SignupViewTest(TestCase):
         for message in messages:
             self.assertEqual(message.message, _("Your account was "
                                                 "successfully created!"))
-        user = CustomUser.objects.get(email=self.valid_data.get('main-email'))
+        user = CustomUser.objects.last()
         self.assertTrue(user.user_type, 'SU')
+        # Check if profile was saved
+        profile = user.profile
+        self.assertEqual(profile.gender, self.valid_data.get('profile-gender'))
+        self.assertEqual(profile.picture,
+                         self.valid_data.get('profile-picture'))
 
     def test_empty_data_failure(self):
         response = self.client.get(reverse('signup'))
@@ -140,13 +154,11 @@ class SignupViewTest(TestCase):
 
 class AssessorLoginViewTest(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username='test_user',
-                                                   email='test@test.com',
+        self.user = CustomUser.objects.create_user(email='test@test.com',
                                                    password='testPassword',)
         self.assessor = CustomUser.objects.create_user(
-            username='test_auser', email='test_au@test.com',
-            password='testPassword', user_type='AU', parent=self.user,
-            super_user=self.user,
+            email='test_au@test.com', password='testPassword', user_type='AU',
+            parent=self.user, super_user=self.user,
         )
         self.login_data = {'email': 'test_au@test.com',
                            'password': 'testPassword'}
@@ -198,8 +210,9 @@ class AssessorLoginViewTest(TestCase):
                                                 'found in database!'))
 
 
-class AssessorSignUpViewTest(TestCase):
+class RegisterAssessorViewTest(LoggedInTestCase):
     def setUp(self):
+        super(RegisterAssessorViewTest, self).setUp()
         self.valid_data = {
             'main-first_name': 'Iraquitan',
             'main-last_name': 'Cordeiro Filho',
@@ -207,9 +220,13 @@ class AssessorSignUpViewTest(TestCase):
             'main-password': 'testPassword',
             'main-email': 'testemail@gmail.com',
             'profile-gender': 'M', 'profile-picture': '',
+            'address-street': 'R. Antônio Barreto, 166',
             'address-country': 'Brazil', 'address-state': 'Pará',
-            'address-city': 'Belém', 'address-postcode': '66050-110'
+            'address-city': 'Belém', 'address-postcode': '66050-050'
         }
+
+    def test_user_is_logged_in(self):
+        self.assertTrue(self.is_logged_in)
 
     def test_success(self):
         response = self.client.get(reverse('assessor-register'))
@@ -233,8 +250,24 @@ class AssessorSignUpViewTest(TestCase):
         for message in messages:
             self.assertEqual(message.message, _("Your account was "
                                                 "successfully created!"))
-        user = CustomUser.objects.get(email=self.valid_data.get('main-email'))
-        self.assertTrue(user.user_type, 'AU')
+        user = CustomUser.objects.last()
+        self.assertEqual(user.user_type, 'AU')
+        # Check if profile was saved
+        profile = user.profile
+        self.assertEqual(profile.gender, self.valid_data.get('profile-gender'))
+        self.assertEqual(profile.picture,
+                         self.valid_data.get('profile-picture'))
+        # Check if address was saved
+        self.assertEqual(user.addresses.count(), 1)
+        address = user.addresses.get()
+        self.assertEqual(address.country,
+                         self.valid_data.get('address-country'))
+        self.assertEqual(address.state,
+                         self.valid_data.get('address-state'))
+        self.assertEqual(address.city,
+                         self.valid_data.get('address-city'))
+        self.assertEqual(address.postcode,
+                         self.valid_data.get('address-postcode'))
 
     def test_failure(self):
         response = self.client.post(reverse('assessor-register'),

@@ -25,7 +25,7 @@ class ProfileForm(forms.ModelForm):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ['country', 'postcode', 'state', 'city']
+        fields = ['street', 'country', 'postcode', 'state', 'city']
 
 
 @placeholderify

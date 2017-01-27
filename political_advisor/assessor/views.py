@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 
@@ -37,7 +38,8 @@ def login_view(request):
                   {'form': form, 'title': title, 'submit': submit})
 
 
-def register_assessor(request):
+@login_required
+def register_assessor_view(request):
     if request.method == 'POST':
         custom_user_form = CustomUserForm(request.POST, prefix='main')
         profile_form = ProfileForm(request.POST, prefix='profile')

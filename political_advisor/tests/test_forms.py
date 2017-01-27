@@ -58,16 +58,18 @@ class ProfileFormTest(TestCase):
 class AddressFormTest(TestCase):
     def setUp(self):
         self.form_valid_data = {
+            'street': 'R. Antônio Barreto, 166',
             'country': 'Brazil',
             'state': 'Pará',
             'city': 'Belém',
-            'postcode': '66050110',
+            'postcode': '66050-050',
         }
         self.form_invalid_data = {
+            'street': '',
             'country': 'Brazil',
             'state': '',
             'city': 'Belém',
-            'postcode': '66050110',
+            'postcode': '66050-050',
         }
 
     def test_valid_data(self):
@@ -83,4 +85,5 @@ class AddressFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors, {
             'state': ['This field is required.'],
+            'street': ['This field is required.'],
         })
